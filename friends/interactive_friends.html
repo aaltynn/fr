@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Friend Animation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px;
+        }
+
+        .main-image {
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .main-image:hover {
+            transform: scale(1.05);
+        }
+
+        .nose-area {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background: rgba(255, 0, 0, 0.3);
+            border-radius: 50%;
+            top: 45%;
+            left: 48%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .nose-area:hover {
+            background: rgba(255, 0, 0, 0.6);
+        }
+
+        .dripping-image {
+            position: absolute;
+            max-width: 450px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(-100px) scale(0.1);
+            transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: none;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            transform-origin: center top;
+        }
+
+        .dripping-image.show {
+            opacity: 1;
+            transform: translateY(50px) scale(1);
+            pointer-events: auto;
+        }
+
+        .main-image.hide {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .finger-area {
+            position: absolute;
+            width: 30px;
+            height: 35px;
+            background: rgba(0, 255, 0, 0.4);
+            border: 2px solid rgba(0, 255, 0, 0.8);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 15;
+            display: none; /* Hidden initially */
+        }
+
+        .finger-area.show {
+            display: block;
+        }
+
+        .finger-area:hover {
+            background: rgba(0, 255, 0, 0.7);
+            transform: scale(1.2);
+        }
+
+        .final-image {
+            position: absolute;
+            max-width: 450px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: scale(0) rotate(180deg);
+            transition: all 1s ease;
+            z-index: 20;
+            top: 0;
+            left: 0;
+        }
+
+        .final-image.show {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .instructions {
+            color: white;
+            margin-top: 30px;
+            font-size: 18px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .completed {
+            background: rgba(0, 255, 0, 0.2) !important;
+            text-decoration: line-through;
+        }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .container h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+            .image-container {
+                margin: 10px;
+            }
+
+            .main-image {
+                max-width: 300px;
+            }
+
+            .dripping-image {
+                max-width: 350px;
+            }
+
+            .final-image {
+                max-width: 350px;
+            }
+
+            .nose-area {
+                width: 25px;
+                height: 18px;
+                top: 45%;
+                left: 47%;
+            }
+
+            .finger-area {
+                width: 25px;
+                height: 28px;
+            }
+
+            .instructions {
+                font-size: 16px;
+                margin-top: 20px;
+            }
+
+            .step {
+                font-size: 14px;
+                padding: 8px;
+                margin: 8px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+
+            .main-image {
+                max-width: 250px;
+            }
+
+            .dripping-image {
+                max-width: 280px;
+            }
+
+            .final-image {
+                max-width: 280px;
+            }
+
+            .nose-area {
+                width: 20px;
+                height: 15px;
+                top: 45%;
+                left: 46%;
+            }
+
+            .finger-area {
+                width: 20px;
+                height: 25px;
+            }
+
+            .instructions {
+                font-size: 14px;
+                margin-top: 15px;
+            }
+
+            .step {
+                font-size: 12px;
+                padding: 6px;
+                margin: 6px 0;
+            }
+        }
+
+        /* Touch-friendly interactions for mobile */
+        @media (hover: none) and (pointer: coarse) {
+            .nose-area {
+                width: 35px;
+                height: 25px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            .finger-area {
+                width: 35px;
+                height: 40px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            .nose-area:hover,
+            .finger-area:hover {
+                background: rgba(255, 0, 0, 0.6);
+                transform: none;
+            }
+
+            .main-image:hover {
+                transform: none;
+            }
+
+            .nose-area:active,
+            .finger-area:active {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Interactive Friend Animation</h1>
+
+        <div class="image-container">
+            <!-- Main image: umut.jpeg -->
+            <img src="umut.jpeg" alt="Umut" class="main-image" id="mainImage">
+
+            <!-- Clickable nose area -->
+            <div class="nose-area" id="noseArea" title="Click the nose!"></div>
+
+            <!-- Dripping image: e4gemen.jpeg -->
+            <img src="e4gemen.jpeg" alt="E4gemen" class="dripping-image" id="drippingImage">
+
+            <!-- Clickable finger area on dripping image -->
+            <div class="finger-area" id="fingerArea" title="Click the finger!"></div>
+
+            <!-- Final image: fidan.jpeg -->
+            <img src="fidan.jpeg" alt="Fidan" class="final-image" id="finalImage">
+        </div>
+
+        <div class="instructions">
+            <div class="step" id="step1">Step 1: Click on Umut's nose 👃</div>
+            <div class="step" id="step2">Step 2: Click on E4gemen's finger 👆</div>
+            <div class="step" id="step3">Step 3: Enjoy the surprise! 🎉</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const noseArea = document.getElementById('noseArea');
+            const drippingImage = document.getElementById('drippingImage');
+            const fingerArea = document.getElementById('fingerArea');
+            const finalImage = document.getElementById('finalImage');
+            const mainImage = document.getElementById('mainImage');
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+
+            let step = 1;
+
+            // Step 1: Click nose to hide main image and show dripping image
+            noseArea.addEventListener('click', function() {
+                if (step === 1) {
+                    mainImage.classList.add('hide');
+                    drippingImage.classList.add('show');
+                    step1.classList.add('completed');
+                    step = 2;
+
+                    // Position and show finger area on E4gemen after he appears
+                    setTimeout(() => {
+                        const container = document.querySelector('.image-container');
+                        const containerRect = container.getBoundingClientRect();
+                        const drippingRect = drippingImage.getBoundingClientRect();
+
+                        // Position finger on the left-middle of E4gemen (finger area)
+                        fingerArea.style.position = 'absolute';
+                        fingerArea.style.top = (drippingRect.top - containerRect.top + drippingRect.height * 0.5) + 'px';
+                        fingerArea.style.left = (drippingRect.left - containerRect.left + drippingRect.width * 0.35) + 'px';
+                        fingerArea.style.width = '30px';
+                        fingerArea.style.height = '35px';
+                        fingerArea.style.zIndex = '15';
+                        fingerArea.classList.add('show'); // Make it visible
+
+                        console.log('Finger area positioned at:', fingerArea.style.left, fingerArea.style.top);
+                    }, 1500); // Increased delay to ensure animation is complete
+                }
+            });
+
+            // Step 2: Click finger to replace E4gemen with Fidan
+            fingerArea.addEventListener('click', function() {
+                if (step === 2) {
+                    // Hide E4gemen with a fly-away animation
+                    drippingImage.style.transform = 'translateY(-200px) scale(0.5)';
+                    drippingImage.style.opacity = '0';
+                    drippingImage.style.transition = 'all 0.8s ease-out';
+
+                    // Hide finger area
+                    fingerArea.classList.remove('show');
+
+                    // Show Fidan in E4gemen's place
+                    setTimeout(() => {
+                        finalImage.classList.add('show');
+                        step2.classList.add('completed');
+                        step3.classList.add('completed');
+                        step = 3;
+
+                        // Add some fun animation
+                        setTimeout(() => {
+                            finalImage.style.animation = 'bounce 1s infinite';
+                        }, 1000);
+                    }, 400);
+                }
+            });
+
+            // Add bounce animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes bounce {
+                    0%, 20%, 50%, 80%, 100% { transform: translateY(0) scale(1); }
+                    40% { transform: translateY(-10px) scale(1.1); }
+                    60% { transform: translateY(-5px) scale(1.05); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
